@@ -18,13 +18,14 @@ lalu, jalankan perintah `pip install -r requirements.txt` untuk menginstall requ
 4. Buat proyek django dengan nama **rey_inventory** dengan menjalankan perintah `django-admin startproject rey_inventory .`
 
 ### 2. Membuat aplikasi dengan nama **main** di proyek tersebut
-1. Jalankan perintah `python manage.py startapp main`
+1. Jalankan perintah `python manage.py startapp main` untuk membuat aplikasi `main`
 2. Mendaftarkan aplikasi **main** ke dalam proyek dengan membuka berkas `settings.py`, lalu masukkan **main** ke dalam variable **INSTALLED_APPS**
 
 ### 3. Melakukan _routing_ pada proyek agar dapat menjalankan **main**
 1. Buka berkas `urls.py` pada **direktori proyek rey_inventory** lalu import fungsi `include` dari `django.urls`
    `from django.urls import path, include`
 2. Tambahkan rute url di dalam variabel **urlpatterns**
+Berkas ini berguna untuk mengatur URL yang terkait pada aplikasi `main`
 
 ### 4. Membuat model pada aplikasi `main` dengan nama `Item` dengan beberapa atribut wajib
 1. Isi berkas `models.py` pada direktori aplikasi `main` lalu isi dengan kode berikut
