@@ -1,5 +1,5 @@
 # rey_inventory
-
+[Application Link](http://localhost:8000/main/)
 ## **Pengimplementasian checklist secara step-by-step**
 ### 1. Membuat proyek Django baru
 1. Masuk ke dalam repo utama, lalu jalankan _command prompt_ dan buat virtual environment dengan menjalankan 	`python -m venv env`  (***penjelasan kegunaan virtual environment ada di bagian bawah***)
