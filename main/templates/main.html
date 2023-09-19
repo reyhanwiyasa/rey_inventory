@@ -1,10 +1,42 @@
-<h1>Rey Inventory</h1>
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Rey Inventory</h1>
 
-<h5>Name: </h5>
-<p>{{ name }}</p>
-<h5>Class: </h5>
-<p>{{ class }}</p>
-<h5>Amount: </h5>
-<p>{{ amount }}</p>
-<h5>Description: </h5>
-<p>{{ description }}</p>
+    <h5>Name: </h5>
+    <p>{{ name }}</p>
+    <h5>Class: </h5>
+    <p>{{ class }}</p>
+    <h5>Amount: </h5>
+    <p>{{ amount }}</p>
+    <h5>Description: </h5>
+    <p>{{ description }}</p>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Date Added</th>
+        </tr>
+    
+        {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
+    
+        {% for item in items %}
+            <tr>
+                <td>{{item.name}}</td>
+                <td>{{item.amount}}</td>
+                <td>{{item.description}}</td>
+                <td>{{item.date_added}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <br />
+    
+    <a href="{% url 'main:create_product' %}">
+        <button>
+            Add New Product
+        </button>
+    </a>
+
+{% endblock content %}
