@@ -1,5 +1,105 @@
 # rey_inventory
 [Application Link](https://rey-inventory.adaptable.app/main/)
+# TUGAS 3
+## Perbedaan antara form **POST** dan form **GET** dalam Django
+**POST** dan **GET** adalah method HTTP yang digunakan ketika kita berurusan dengan *forms*.
+
+Pengiriman data yang melalui **POST** akan di encode terlebih dahulu untuk *transmission*, lalu dikirim ke *server*, baru kita menerima *response* dari *server*. Hal ini membuat pengiriman data melalui **POST** tidak mudah terlihat dan tidak akan muncul pada *url*. Karena sifatnya yang tersembunyi, **POST** cocok digunakan untuk mengisi password form, upload file, dan sebagainya.
+
+Berbeda dengan **POST**, **GET** adalah method HTTP yang fokus pada simplisitas. Data yang dikirim akan disimpan pada *url* yang dituju. Hal ini membuat **GET** cocok untuk digunakan pada *web search form*, karena *URL* nya dapat mudah di *bookmark*, *shared*, dan *resubmitted*.
+## Apa perbedaan utama antara XML, JSON, dan HTML dalam konteks pengiriman data?
+Perbedaan utama antara **XML**, **JSON**, dan **HTML** terletak pada *format* dan *syntax* yang mereka gunakan.
+
+* **HTML** jauh lebih *human-readable* dibandingkan JSON dan HTML, namun susah dipahami oleh *machine* karena sebuah halaman **HTML** berisi bukan hanya data, namun terdapat *design*, konten, script, dan lain-lain.
+
+
+* **XML** adalah format yang *machine* dan *human-readable*. Struktur yang dimiliki **XML** mirip dengan struktur pada **HTML**, di mana terdapat *tree* yang memiliki satu *root*, dan terdapat *tags* yang ditandai dengan tanda <>, mirip seperti **HTML**
+
+* **JSON** adalah format yang *machine* dan *human-readable*. **JSON** menggunakan *key-value pairs*, di mana *Key* nya berupa *String*. Format yang digunakan **JSON** ini mirip seperti yang digunakan oleh *Dictionary* dan *Map*.
+
+##  Mengapa JSON sering digunakan dalam pertukaran data antara aplikasi web modern?
+*JSON** dikembangkan setelah adanya **XML**, membuat **JSON** lebih modern dibanding **XML**. **JSON** sering digunakan dalam pertukaran data antara aplikasi web modern karena sifatnya yang *machine* dan *human-readable*. Penggunaan struktur data berupa *Dictiornary* dan *List* yang digunakan **JSON** juga lebih membuatnya lebih *compact* dan lebi hmudah untuk dibaca dibandingkan **XML**.
+## Pengimplementasian _checklist_ di atas secara _step-by-step_
+**1. Membuat kerangka *Views* <br>**
+Kerangka ini berguna agar kode kita konsisten dan memperkecil terjadinya redundansi kode
+
+**2. Membuat Forms `forms.py`**
+buat file *forms.py* pada direktori app yang berguna untuk membuat form. Seluruh HTML sudah di-handle oleh library `django.forms`. Contoh isi `forms.py` :
+```
+from django.forms import ModelForm
+from main.models import Product
+
+class ProductForm(ModelForm):
+    class Meta:
+        model = Product
+        fields = ["name", "amount", "description"]
+```
+**3. Merender Forms**<br>
+Buat file pada directory `templates` bernama `create_product` dengan kode berikut:
+```
+{% extends 'base.html' %} 
+
+{% block content %}
+<h1>Add New Product</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Add Product"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}
+```
+baris `form.as_table` akan merender form secara keseluruhan
+
+**4. Menambahkan fungsi-fungsi `views` serializer JSON dan XML**<br>
+Serializer digunakan untuk mengirim data dalam bentuk JSON dan XML. Serializer diimplementasikan dalam `views.py` di mana ia akan mengreturn `HTTPResponse`
+```
+from django.core import serializers
+
+def show_xml(request):
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json(request):
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+def show_xml_by_id(request, id):
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json_by_id(request, id):
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+```
+**5 Membuat routing URL untuk masing-masing views**<br>
+Kita taruh fungsi-fungsi yang telah dibuat di `views.py` tadi ke `urls.py` yang terdapat pada direktori aplikasi agar kita dapat melakukan *routing* ke URLs yang dituju.
+```
+from django.urls import path
+from main.views import show_main, create_product, show_xml, show_json, show_xml_by_id, show_json_by_id
+
+app_name = 'main'
+
+urlpatterns = [
+   . . .,
+    path('xml/', show_xml, name='show_xml'),
+    path('json/', show_json, name='show_json'),  
+    path('xml/<int:id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<int:id>/', show_json_by_id, name='show_json_by_id'), 
+]
+```
+<br>
+<hr>
+
+# TUGAS 2
 ## **Pengimplementasian checklist secara step-by-step**
 ### 1. Membuat proyek Django baru
 1. Masuk ke dalam repo utama, lalu jalankan _command prompt_ dan buat virtual environment dengan menjalankan 	`python -m venv env`  (***penjelasan kegunaan virtual environment ada di bagian bawah***)
