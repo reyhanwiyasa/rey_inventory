@@ -99,6 +99,17 @@ urlpatterns = [
 <br>
 <hr>
 
+## Mengakses data menggunakan *postman*
+1. Data HTML![data html](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/d5ded678-df1b-42e7-bd87-baf71b04cef6)
+2. Data XML![data xml](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/aaaa2249-0738-4a27-b605-ed0d00e68854)
+3. Data XML by ID![data xml by id](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/199fba33-49e4-4d44-b107-b619a338504b)
+4. Data JSON![data json](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/f9d51776-bd2a-47b7-80d1-3f189a7eb54b)
+5. Data JSON by ID![data json by id](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/e8d7cbb9-220f-44cf-a1ca-67cf175f8dcd)
+
+
+
+
+
 # TUGAS 2
 ## **Pengimplementasian checklist secara step-by-step**
 ### 1. Membuat proyek Django baru
