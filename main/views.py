@@ -90,6 +90,24 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
+def sub_amount(request, id):
+    data = Item.objects.get(pk=id)
+    if(data.amount>0):
+        data.amount -= 1
+        data.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+    data.save()
+    return HttpResponseRedirect(reverse('main:show_main'))
 
+def increment_amount(request, id):
+    data = Item.objects.get(pk=id)
+    data.amount+=1
+    data.save()
+    return HttpResponseRedirect(reverse('main:show_main'))
+
+def delete_item(request, id):
+    data = Item.objects.get(pk=id)
+    data.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
 
 # Create your views here.

@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import show_main, create_product, show_xml, show_json, show_xml_by_id, show_json_by_id
+from main.views import show_main, create_product, show_xml, show_json, show_xml_by_id, show_json_by_id, sub_amount, increment_amount, delete_item
 from main.views import register
 from main.views import login_user
 from main.views import logout_user
@@ -16,5 +16,8 @@ urlpatterns = [
     path('json/<int:id>/', show_json_by_id, name='show_json_by_id'),
     path('register/', register, name='register'),
     path('login/', login_user, name='login'),
-    path('logout/', logout_user, name='logout'), 
+    path('logout/', logout_user, name='logout'),
+    path('add-amount/<int:id>/',increment_amount, name='increment_amount'),
+    path('sub-amount/<int:id>/',sub_amount, name='sub_amount'),
+    path('delete_item/<int:id>/',delete_item, name='delete_item'), 
 ]
