@@ -1,5 +1,182 @@
 # rey_inventory
 [Application Link](https://rey-inventory.adaptable.app/main/)
+# TUGAS 4
+## Apa itu Django `UserCreationForm`?
+`UserCreationForm` adalah modul bawaan dari Django yang meng-_inherits_ kelas `ModelForm`. Guna dari `UserCreationForm` ini adalah untuk memudahkan pembuatan `form` user, sehingga kita tidak perlu membuat kode agar user dapat register dan login dari awal. Kekurangannya adalah karena modul ini merupakan modul bawaan, jadi modul ini akan mengikuti _customization_ dari Django sendiri. Namun, komponen dari `UserCreationForm` sebenarnya dapat di _break-down_ menjadi komponen kecil jika kita ingin mengkustomisasinya
+
+## Perbedaan `autentikasi` dan `otorisasi` dalam konteks Django
+Autentikasi adalah proses memverifikasi _user_, seperti siapa yang sedang _login_. Otorisasi adalah proses menentukan _user_ yang telah di autentikasi dapat melakukan apa saja pada program. Kedua hal ini penting karena tentunya kita perlu sebuah langkah untuk menentukan siapa yang bisa masuk program kita (dengan autentikasi), dan apa saja yang bisa ia lakukan pada program kita (otorisasi). Bayangkan bila kita membiarkan siapa saja yang masuk pada program kita dapat melakukan apa saja karena tidak melewati otorisasi. Program yang kita buat dapat menjadi kacau karena diotak-atik orang luar.
+
+## Cookies
+`Cookies` adalah _text file_ berukuran kecil yang disimpan pada sisi _client_. `Cookies` secara singkat bisa dibilang berguna untuk mengubah HTTP yang _stateless protocol_ menjadi _stateful protocol_ (_user_ yang pernah _login_ datanya akan tersimpan dalam bentuk `cookies`).
+<br>
+Kita dapat menggunakan `Cookies` di Django dengan meng-_import_ HttpResponse, lalu menggunakan method `.set_cookie`, lalu kita bisa mengakses cookie tersebut dengan method `request.COOKIES`
+
+## Apakah Cookies itu aman?
+Cookies membuat _user_ lebih nyaman dalam menggunakan aplikasi karena _user_ tidak perlu melakukan _login_ setiap kali masuk aplikasi. Namun, biasanya kenyamanan berbanding terbalik dengan keamanan. Cookies secara transparan dapat dilihat oleh _user_ pada browsernya. Karena ketransparannya ini, Cookies dapat mudah di-_copy_. Terdapat berbagai jenis serangan yang berhubungan dengan Cookies, misalnya `Cookies poisoning`
+
+## Pengimplementasian _step-by-step_
+**1. Pembuatan _register_, _login_, dan _logout_**
+Pertama, buat fungsi-fungsi  _register_, _login_, dan _logout_ tersebut pada `views.py`
+
+Register :
+```
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+```
+<br>
+
+Login :
+```
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            response = HttpResponseRedirect(reverse("main:show_main")) 
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+        else:
+            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
+    context = {}
+    return render(request, 'login.html', context)
+```
+<br>
+
+Logout :
+```
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
+
+Pada kode di atas, fungsi `Login` dan `Logout` sudah kita terapkan penggunaan `Cookies` karena terdapat method `.set_cookie` untuk menerapkan Cookies dan method  `.delete_cookie` untuk menghapus Cookies ketika Logout
+
+**2. Pembuatan halaman `Register` dan `Login`**
+Setelah membuat fungsi pada `views.py`, kita membuat halaman `Register` dan `Login` agar fungsi tersebut ketika diletakan pada `urls.py` dapat membawa kita ke halaman yang dimaksud
+
+register.html:
+
+```
+{% extends 'base.html' %}
+
+{% block meta %}
+    <title>Register</title>
+{% endblock meta %}
+
+{% block content %}  
+
+<div class = "login">
+    
+    <h1>Register</h1>  
+
+        <form method="POST" >  
+            {% csrf_token %}  
+            <table>  
+                {{ form.as_table }}  
+                <tr>  
+                    <td></td>
+                    <td><input type="submit" name="submit" value="Daftar"/></td>  
+                </tr>  
+            </table>  
+        </form>
+
+    {% if messages %}  
+        <ul>   
+            {% for message in messages %}  
+                <li>{{ message }}</li>  
+                {% endfor %}  
+        </ul>   
+    {% endif %}
+
+</div>  
+
+{% endblock content %}
+```
+<br>
+
+login.html:
+```
+{% extends 'base.html' %}
+
+{% block meta %}
+    <title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div class = "login">
+
+    <h1>Login</h1>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>Username: </td>
+                <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
+            </tr>
+                    
+            <tr>
+                <td>Password: </td>
+                <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td><input class="btn login_btn" type="submit" value="Login"></td>
+            </tr>
+        </table>
+    </form>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}     
+        
+    Don't have an account yet? <a href="{% url 'main:register' %}">Register Now</a>
+
+</div>
+
+{% endblock content %}
+```
+**3. Membuat 2 akun pengguna**
+<br>
+![ezgif com-video-to-gif](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/9a8857d7-55df-48a3-a97b-f86c67871aff)
+
+<br>
+
+**4. Menghubungkan model `Item` dengan `User`**
+Menghubungkan model ke user pada Django dapat dilakukan dengan mengimport kode berikut
+```
+from django.contrib.auth.models import User
+```
+Lalu, pada model yang telah dibuat, ditambahkan potongan kode berikut
+
+```
+class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+```
+
+Penghubungan Item dengan User merupakan sebuah _Relationship_. Jenis Relationship ada empat, yaitu one-to-one, one-to-many, many-to-one, dan many-to-many. Pada kasus ini, kita menggunakan Relationship one-to-one, dimana kita menghubungkan satu user kepada satu item.
+<hr>
+
 # TUGAS 3
 ## Perbedaan antara form **POST** dan form **GET** dalam Django
 **POST** dan **GET** adalah method HTTP yang digunakan ketika kita berurusan dengan *forms*.
@@ -98,6 +275,17 @@ urlpatterns = [
 ```
 <br>
 <hr>
+
+## Mengakses data menggunakan *postman*
+1. Data HTML![data html](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/d5ded678-df1b-42e7-bd87-baf71b04cef6)
+2. Data XML![data xml](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/aaaa2249-0738-4a27-b605-ed0d00e68854)
+3. Data XML by ID![data xml by id](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/199fba33-49e4-4d44-b107-b619a338504b)
+4. Data JSON![data json](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/f9d51776-bd2a-47b7-80d1-3f189a7eb54b)
+5. Data JSON by ID![data json by id](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/e8d7cbb9-220f-44cf-a1ca-67cf175f8dcd)
+
+
+
+
 
 # TUGAS 2
 ## **Pengimplementasian checklist secara step-by-step**
