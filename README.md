@@ -1,5 +1,83 @@
 # rey_inventory
 [Application Link](https://rey-inventory.adaptable.app/main/)
+# TUGAS 5
+## Element selector dan kapan menggunakannya
+Selector pada CSS digunakan untuk memilih _tag_ mana yang mau di-_style_. Saat menggunakan CSS, urutan prioritas pemilihan _style_ dari yang tertinggi ke yang terendah adalah inline, internal, dan external. Namun, terkadang kita bisa memiliki lebih dari satu tag yang sama saat menggunakan CSS namun kita ingin tag tersebut memiliki style yang berbeda. CSS Selectors inilah yang memili peran yang sangat penting bila terjadi kasus seperti itu. Contoh CSS Selectors :
+
+
+```
+h1, h2, h3{
+    color: red
+}
+```
+ini berarti kita ingin memilih semua h1, h2, dan h3 untuk memiliki warna merah
+
+<br>
+
+```
+div > p{
+    color: blue
+}
+```
+Ini berarti kita ingin memilih semua elemen p yang mana parentnya adalah div, dan mewarnai semua p tersebut dengan warna biru. Elemen p yang berada di luar div tidak akan terpengaruh
+
+<br>
+
+```
+p.class{
+    color: red
+}
+```
+Ini berarti kita ingin memilih semua p dengan class: class untuk berwarna merah. Elemen p lain yang tidak memiliki class: class tidak akan terpengaruh
+
+<br>
+
+Selain dari ketiga ini, masih sangat banyak CSS Selectors lainnya, dan setiap CSS Selectors tersebut memiliki fungsinya masing masing agar kita dapat memilih dengan tepat element mana yang mau kita style
+
+<br>
+
+## HTML5 Tag
+HTML Tag adalah sejenis _keyword_ yang mendefinisikan bagaimana web browser kita akan menampilkan data yang ingin kita tampilkan. Untuk dokumentasi lengkap dari HTML5 Tags, bisa dibuka pada [link ini](https://www.w3schools.com/TAGS/default.asp).
+Beberapa contoh dan kegunaan HTML Tags yang sering digunakan adalah:
+1. \<h1>, \<h2>, \<h3>, dst
+<br>
+
+    Tags di atas adalah tag Header. Good practice nya, setiap halaman HTML hanya boleh memiliki 1 \<h1>, biasanya sebagai judul utama.
+
+2. \<p>
+<br>
+
+    Tag ini digunakan untuk menampilkan paragraf.
+
+3. \<ol>, \<ul>, \<li>
+<br>
+   Ketiga tag di atas digunakan untuk menampilkan list item. \<ol> untuk menampilkan list yang berurutan (ordered list), dan \<ul> untuk menampilkan list yang tidak berurutan (unordered list) 
+
+<br>
+
+## Perbedaan margin dan padding
+Margin dan padding adalah element yang terdapat pada box layout CSS. Kedua element ini sangat berguna untuk menentukan posisi dari container yang kita buat. Padding adalah jarak dari elemen di dalam container ke arah border![padding foto](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/3877e067-a4a5-49b9-a3f1-3e24b57c4946).
+
+<br>
+
+Margin adalah jarak dari container yang kita buat ke arah luar![margin foto](https://github.com/reyhanwiyasa/rey_inventory/assets/119433464/546f4472-9e09-482e-b5f8-5c9dc935440e).
+
+<br>
+
+## Perbedaan _framework_ CSSS `tailwind` dan `bootstrap` dan kapan menggunakannya
+Tailwind dan bootstrap adalah framework CSS yang mempermudah front-end developer dalam membuat komponen-komponen CSS. Perbedaannya terletak pada kemudahan implementasi dan kustomisasi.
+Tailwind lebih sulit diimplementasi dibanding bootstrap. Namun, tailwind memungkinkan kustomisasi yang lebih luas dibanding bootstrap. Hal ini membuat tailwind lebih cocok digunakan bila pembuatan website memiliki jangka waktu yang lama. Sebaliknya, bootstrap lebih mudah diimplementasi namun memiliki kekurangan dalam kustomisasi. Hal ini membuat bootstrap lebih cocok digunakan bila pembuatan website memiliki jangka waktu yang pendek.
+
+<br>
+
+## Pengimplementasian checklist
+1. Awalnya, saya mencoba untuk menggunakan external CSS dalam tugas kali ini. Namun entah kenapa masih ada problem pada bagian static nya, jadi untuk sekarang saya masih menggunakan internal CSS dalam proses _styling_ nya
+2. Untuk kustomisasi halaman register dan login, saya mencari di Google. Lalu saya _copy-paste_ CSS dan HTML nya, dan saya lakukan kustomisasi agar dapat menyesuaikan dengan website yang saya buat
+3. Untuk halaman main.html, saya mencari di bootstrap. Sama seperti sebelumnya, saya lakukan _copy-paste_ lalu kemudian saya kustomisasi agar dapat menyesuaikan website.
+
+<br> 
+<hr>
+
 # TUGAS 4
 ## Apa itu Django `UserCreationForm`?
 `UserCreationForm` adalah modul bawaan dari Django yang meng-_inherits_ kelas `ModelForm`. Guna dari `UserCreationForm` ini adalah untuk memudahkan pembuatan `form` user, sehingga kita tidak perlu membuat kode agar user dapat register dan login dari awal. Kekurangannya adalah karena modul ini merupakan modul bawaan, jadi modul ini akan mengikuti _customization_ dari Django sendiri. Namun, komponen dari `UserCreationForm` sebenarnya dapat di _break-down_ menjadi komponen kecil jika kita ingin mengkustomisasinya
