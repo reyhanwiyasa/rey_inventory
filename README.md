@@ -1,5 +1,126 @@
 # rey_inventory
 [Application Link](https://rey-inventory.adaptable.app/main/)
+# TUGAS 6
+## Perbedaan asynchronous programming dan synchronous programming
+Perbedaan asynchronous programming dan synchronous programming terletak pada urutan dieksekusinya. Synchronous programming diekesuksi secara berurutan dari atas ke bawah. Asynchronous programming diekesuksi dari atas ke bawah juga, namun bila terdapat fungsi asynchronous, maka fungsi tersebut akan dieksekusi secara independent dengan kode yang ada.
+
+## Paradigma _event-driven programming_
+Paradigma event-driven programming adalah cara pemrogaman di mana input dari user akan di handle oleh event handler, yang berarti input dari user akan mempengaruhi jalan kerja dari program yang dibuat. Program yang dibuat tidak berjalan secara linear, melainkan akan merespons input-input dari user. Input dari user inilah yang dinamakan `event`, dan fungsi yang menerima event tersebut dinamakan `event-handler`.
+<br>
+
+Contoh penerapannya pada aplikasi `rey_inventory` terletak pada script yang ada di `main.html`. Pada main.html, terdapat baris kode `document.getElementById("button_add").onclick = addProduct`, yang berarti program akan mencari button dengan id berupa **button_add**, lalu ketika tombol tersebut di klik (**on_click**), maka fungsi `addProduct` akan dijalankan
+
+## Penerapan asynchronous programming pada AJAX
+Asynchronous programming pada AJAX memungkinkan kita untuk mengirim request ke server tanpa menghentikan / menghalangi eksekusi dari kode utama kita. Salah satu penerapan asynchronous programming pada AJAX adalah dengan menggunakan metode `fetch`. Metode fetch akan mengembalikan `promises` yang kemudian akan di handle oleh event-listener `then`. Selama menunggu respons dari server, program akan tetap berjalan dan menjalankan tugas lain dan akan tetap responsif.
+
+## Perbandingan Fetch API dengan library jQuery
+|       **Fetch API**    |    **jQuery**    |
+|    :-----------:   |    :-----------:     |
+|Merupakan native JavaScript API yang modern dan merupakan bagian dari standar Web Platform API| JavaScript library yang sudah ada dari lama dan digunakan untuk mengsimplify AJAX request, namun bukan merupakan fitur native dari browser|
+| Ringan dan tidak memerlukan library atau dependencies tambahan | Merupakan library yang luas yang memungkinkan fitur lain di luar AJAX request |
+| Menyediakan lower-level control pada HTTP Request, sehingga membuatnya lebih fleksibel dalam menerapkan request headers, configure requests, dan menghandle responses | jQuery menyediakan interface yang lebih simpel untuk diterapkan, namun kurang pada segi fleksibilitas |
+
+## Pengimplementasian checklist 
+1. Saya mengimplementasikan AJAX GET pada cards data item dengan menambah fungsi addProduct pada script seperti berikut
+```
+    function addProduct() {
+        fetch("{% url 'main:add_product_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshProducts)
+
+        document.getElementById("form").reset()
+        return false
+    }
+    document.getElementById("button_add").onclick = addProduct
+```
+<br>
+
+2. Lalu, saya membuat fungsi asynchronous bernama refreshProducts yang akan menunggu hasil dari fungsi asynchronous lain bernama getProducts untuk menambah _cards_ baru bila sudah melakukan add Item, dan memasukan _cards_ tersebut ke dalam container dengan id="inventory"
+```
+  async function getProducts() {
+      return fetch("{% url 'main:get_product_json' %}").then((res) => res.json())
+  }
+  async function refreshProducts() {
+        const products = await getProducts()
+
+        let htmlString = "";
+
+        products.forEach(item => {
+        htmlString +=
+          `<div class='nft'><div class='main'><p class='name'>${item.fields.name}</p><p class='description'>Description: ${item.fields.description} </p><div class='d-flex justify-content-between align-items-center'><div class='btn-group'><a href="add-amount/${item.pk}"> <button type="button" class="btn btn-sm btn-outline-secondary">+</button></a><a href="sub-amount/${item.pk}"> <button type="button" class="btn btn-sm btn-outline-secondary">-</button></a><a href="delete_item/${item.pk}"> <button type="button" class="btn btn-sm btn-outline-secondary">Delete</button></a><a href="edit-product/${item.pk}"> <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button></a></div></div><div class='tokenInfo'><div class='price'><ins>◘</ins><p class='description'>Amount : ${item.fields.amount}</p></div></div><hr /></div></div>`
+          console.log(item.pk)
+        })
+        
+        document.getElementById("inventory").innerHTML = htmlString
+    }
+```
+<br>
+
+3. Untuk pengimplementasian AJAK POST, saya membuat fungsi baru pada views.py untuk menambahkan item baru
+```
+@csrf_exempt
+def add_product_ajax(request):
+    if request.method == 'POST':
+        name = request.POST.get("name")
+        amount = request.POST.get("amount")
+        description = request.POST.get("description")
+        user = request.user
+
+        new_product = Item(name=name, amount=amount, description=description, user=user)
+        new_product.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+```
+<br>
+
+4. Lalu, melakukan routing untuk menghubungkan fungsi tersebut pada urls.py dengan mengimport fungsi tersebut dan menambahkan ke urlpatterns
+```
+path('create-product-ajax/', add_product_ajax, name='add_product_ajax'),
+```
+<br>
+
+5. Buat modal yang akan ter-trigger ketika tombol "Add Product by AJAX" ditekan pada main.html
+```
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form id="form" onsubmit="return false;">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                      <label for="name" class="col-form-label">Name:</label>
+                      <input type="text" class="form-control" id="name" name="name"></input>
+                  </div>
+                  <div class="mb-3">
+                      <label for="amount" class="col-form-label">Amount:</label>
+                      <input type="number" class="form-control" id="amount" name="amount"></input>
+                  </div>
+                  <div class="mb-3">
+                      <label for="description" class="col-form-label">Description:</label>
+                      <textarea class="form-control" id="description" name="description"></textarea>
+                  </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Product</button>
+          </div>
+      </div>
+  </div>
+</div>
+```
+
+6. Button untuk add product diberikan id="button_add" agar dapat dihubungkan dengan fungsi addProduct() yang ada pada script di main.html
+
+## Melakukan perintah `collectstatic`
+
 # TUGAS 5
 ## Element selector dan kapan menggunakannya
 Selector pada CSS digunakan untuk memilih _tag_ mana yang mau di-_style_. Saat menggunakan CSS, urutan prioritas pemilihan _style_ dari yang tertinggi ke yang terendah adalah inline, internal, dan external. Namun, terkadang kita bisa memiliki lebih dari satu tag yang sama saat menggunakan CSS namun kita ingin tag tersebut memiliki style yang berbeda. CSS Selectors inilah yang memili peran yang sangat penting bila terjadi kasus seperti itu. Contoh CSS Selectors :
