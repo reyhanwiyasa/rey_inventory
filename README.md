@@ -120,7 +120,7 @@ path('create-product-ajax/', add_product_ajax, name='add_product_ajax'),
 6. Button untuk add product diberikan id="button_add" agar dapat dihubungkan dengan fungsi addProduct() yang ada pada script di main.html
 
 ## Melakukan perintah `collectstatic`
-
+Masuk ke virtual environment, kemudian jalankan perintah `python manage.py collectstatic`
 # TUGAS 5
 ## Element selector dan kapan menggunakannya
 Selector pada CSS digunakan untuk memilih _tag_ mana yang mau di-_style_. Saat menggunakan CSS, urutan prioritas pemilihan _style_ dari yang tertinggi ke yang terendah adalah inline, internal, dan external. Namun, terkadang kita bisa memiliki lebih dari satu tag yang sama saat menggunakan CSS namun kita ingin tag tersebut memiliki style yang berbeda. CSS Selectors inilah yang memili peran yang sangat penting bila terjadi kasus seperti itu. Contoh CSS Selectors :
